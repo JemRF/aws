@@ -22,10 +22,10 @@ const Fahrenheit=0;
 
 //Set the AWS Thing Prefix
 const thingPrefix = "Device_";
-var thingName;
+const thingName = "RaspberryPi";
 
 //Set the AWS End Point e.g. a1jj45tr9rhhbq.iot.us-west-2.amazonaws.com
-const endPoint = 'a1jjwr7r9rhhbq.iot.us-west-2.amazonaws.com';
+const endPoint = 'a1j34fr34frhhbq.iot.us-west-2.amazonaws.com';
 
 // Replace the values below with a unique client identifier and custom host endpoint provided 
 // in AWS IoT cloud NOTE: client identifiers must be unique within your AWS account; if a client 
@@ -51,21 +51,6 @@ var data = {
     command: "",
     value: ""
 };
-
-//
-// Replace the values of '<YourUniqueClientIdentifier>' and '<YourCustomEndpoint>'
-// with a unique client identifier and custom host endpoint provided in AWS IoT cloud
-// NOTE: client identifiers must be unique within your AWS account; if a client attempts 
-// to connect with a client identifier which is already in use, the existing 
-// connection will be terminated.
-//
-var thingShadows = awsIot.thingShadow({
-   keyPath: '/home/pi/aws-keys/private.pem.key',
-  certPath: '/home/pi/aws-keys/certificate.pem.crt',
-    caPath: '/home/pi/aws-keys/root-CA.crt',
-  clientId: thingName,
-      host: endPoint
-});
 
 //
 // Client token value returned from thingShadows.update() operation
@@ -127,14 +112,14 @@ port.on('readable', function () {
 		llapMsg=inStr.substring(1,12);
 		console.log(llapMsg);
 		data.deviceID=llapMsg.substring(0,2);
-		thingName=thingPrefix+data.deviceID;
+		deviceID=thingPrefix+data.deviceID;
 		if (llapMsg.substring(2,6)=="TMPA") {
 			data.value=llapMsg.substring(6,13);
-			data.command="TMP";
+			data.command="TMPA";
 		}
 		if (llapMsg.substring(2,6)=="TMPB") {
 			data.value=llapMsg.substring(6,13);
-			data.command="TMP";
+			data.command="TMPB";
 		}
 		if (llapMsg.substring(2,5)=="HUM") {
 			data.value=llapMsg.substring(5,13);
@@ -142,7 +127,7 @@ port.on('readable', function () {
 		}
 		if (llapMsg.substring(2,6)=="TMPC") {
 			data.value=llapMsg.substring(6,13);
-			data.command="TMP";
+			data.command="TMPC";
 		}
 		if (llapMsg.substring(2,8)=="BUTTON") {
 			data.value=llapMsg.substring(8,13);
@@ -164,7 +149,7 @@ port.on('readable', function () {
 			data.value="";
 			data.command="STARTED";
 		} 
-		if (data.command!=""){
+		if (data.command!="" && data.command!="STATE"){ 
 			data.value.replace('-',' ');
 			data.value.trim();
 			if (Fahrenheit){
@@ -174,7 +159,7 @@ port.on('readable', function () {
 				}
 			}
 				
-			var awsData =  "{\"state\":{\"reported\":{\""+thingName+"\": {\""+data.command+"\":\""+data.value+"\"}}}}";
+			var awsData =  "{\"state\":{\"reported\":{\""+deviceID+"\": {\""+data.command+"\":\""+data.value+"\"}}}}";
 			var awsJSON = JSON.parse(awsData);
 			console.log(awsJSON);
 			

@@ -16,7 +16,6 @@ rf2awsiot.py v1 Serial to AWS interface
 """
 
 import serial
-import globals
 import time
 import sys
 import thread

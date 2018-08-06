@@ -201,7 +201,7 @@ def main():
 						currvalue=""
 						sensordata=""
 						tempbdata=""
-				sleep(0.2)
+				#sleep(0.2)
 				#except:
 				#        print "Error: unable to start thread"
            
